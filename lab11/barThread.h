@@ -4,19 +4,22 @@
 #include <QThread>
 #include <QProgressBar>
 #include <QSemaphore>
+#include <QLabel>
 
-class BarThread : public QThread
+class MyThread : public QThread
 {
 Q_OBJECT
 public:
-    BarThread(QSemaphore* s);
+    MyThread(QLabel *label, int step);
     void run();
-    void reset();
+    void go();
+    void stop();
 private:
-    QSemaphore *semaphore;
-    volatile int cnt = 0;
+    QLabel *label;
+    int step = 0;
+    volatile bool isRun = false;
 signals:
-    void valueChanged(int);
+    void valueChanged(QLabel *label, int step);
 };
 
 #endif // CUSTOMTHREAD_H

@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include <QPropertyAnimation>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,22 +17,13 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_lineEdit_textChanged(const QString &arg1);
+    void slotTimerAlarm();
+    void on_actionstart_triggered();
 
-    void on_inputText_returnPressed();
-
-    void on_startButton_clicked();
-
-    void on_stopButton_clicked();
-    void move();
+    void on_actionstop_triggered();
 
 private:
-    bool stopped = false;
-    int len;
-    int hei;
-    QTimer *timer;
-    int pos = 0;
-    QPropertyAnimation *animation;
     Ui::MainWindow *ui;
+    QTimer *timer;
 };
 #endif // MAINWINDOW_H

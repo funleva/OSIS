@@ -3,8 +3,9 @@
 
 #include <QMainWindow>
 #include <QPainter>
-#include <QPaintEvent>
 #include <QTimer>
+#include <QImage>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,12 +18,14 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void virtual paintEvent(QPaintEvent *event);
+    void virtual mousePressEvent(QMouseEvent *event);
 public slots:
     void onTimeout();
 
 private:
     Ui::MainWindow *ui;
     QTimer *timer;
+    QLabel *label;
+    int xx,yy,dx,dy,kol;
 };
 #endif // MAINWINDOW_H

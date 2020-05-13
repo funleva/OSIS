@@ -3,6 +3,7 @@
 #include <thread>
 
 #include <QtDebug>
+#include <QPixmap>
 
 static int j=0;
 static bool isDraw = true;
@@ -15,10 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    label = new QLabel(this);
+    label->show();
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
-    timer->setInterval(10);
-    timer->start();
+    timer->setInterval(100);
 }
 
 MainWindow::~MainWindow()
@@ -27,30 +29,29 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::onTimeout(){
-
-    j = (j + 2) % 255;
-
-    QPoint pos = QWidget::mapFromGlobal(QCursor::pos()) - QPoint(16,16);
-    for (int i = 19; i >= 1; i--){
-        point[i] = point[i-1];
+    label->move(label->pos().x() + dx, label->pos().y() + dy);
+    kol++;
+    if (kol % 2 == 0) {
+        QImage *image = new QImage();
+        image->load("/Users/newboba/lab9/image1.png");
+        label->setPixmap(QPixmap::fromImage(*image));
+    } else {
+        QImage *image = new QImage();
+        image->load("/Users/newboba/lab9/image2.png");
+        label->setPixmap(QPixmap::fromImage(*image));
     }
-    point[0] = pos;
-    repaint();
+    if (kol == 10) {
+        timer->stop();
+    }
 }
 
-void MainWindow::paintEvent(QPaintEvent *event) {
-    if(isDraw)
-    {
-        QPainter *paint = new QPainter(this);
-
-        paint->setPen(QPen(Qt::black, 0));
-        paint->setRenderHint(QPainter::Antialiasing, true);
-
-        paint->setBrush(QBrush(QColor::fromHsv(j,255, 255), Qt::SolidPattern));
-
-        for ( int i = 0; i < 20; i++){
-            paint->drawEllipse(point[i].x(), point[i].y(), 32, 32);
-        }
-        paint->end();
-    }
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+    timer->stop();
+    QPoint pos = QWidget::mapFromGlobal(QCursor::pos());
+    xx = pos.x();
+    yy = pos.y();
+    dx = (xx - label->pos().x()) / 10;
+    dy = (yy - label->pos().y()) / 10;
+    kol = 0;
+    timer->start();
 }

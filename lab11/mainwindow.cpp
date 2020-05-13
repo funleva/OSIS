@@ -8,11 +8,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->progressBar->setValue(0);
-    ui->progressBar->setRange(0, 100);
-    barThread = new BarThread(semaphore);
-    connect(barThread, SIGNAL(valueChanged(int)), this, SLOT(updateBar(int)));
-    connect(barThread, SIGNAL(valueChanged(int)), this, SLOT(updatePercent(int)));
+    myThread1 = new MyThread(ui->label, 5);
+    myThread2 = new MyThread(ui->label_2, 2);
+    myThread3 = new MyThread(ui->label_3, 8);
+    connect(myThread1, SIGNAL(valueChanged(QLabel*, int)), this, SLOT(updateLabel(QLabel*, int)));
+    connect(myThread2, SIGNAL(valueChanged(QLabel*, int)), this, SLOT(updateLabel(QLabel*, int)));
+    connect(myThread3, SIGNAL(valueChanged(QLabel*, int)), this, SLOT(updateLabel(QLabel*, int)));
 }
 
 MainWindow::~MainWindow()
@@ -20,37 +21,26 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-void MainWindow::on_resetButton_clicked()
-{
-    if (semaphore->available())
-        semaphore->acquire();
-    ui->progressBar->setValue(0);
-    barThread->reset();
-    barThread->terminate();
-}
-
 void MainWindow::on_startButton_clicked()
 {
-    if(!semaphore->available())
-        semaphore->release();
-    if (!barThread->isRunning())
-        barThread->start();
+    if (myThread1->isRunning() == false) {
+        myThread1->start();
+        myThread2->start();
+        myThread3->start();
+    }
+    myThread1->go();
+    myThread2->go();
+    myThread3->go();
 }
 
 void MainWindow::on_pauseButton_clicked()
 {
-    if (semaphore->available())
-        semaphore->acquire();
+    myThread1->stop();
+    myThread2->stop();
+    myThread3->stop();
 }
 
 
-void MainWindow::updateBar(int cnt) {
-    ui->progressBar->setValue(cnt);
+void MainWindow::updateLabel(QLabel *label, int step) {
+    label->move(label->pos().x() + step, label->pos().y());
 }
-
-void MainWindow::updatePercent(int cnt) {
-    ui->statusPercents->setText(QString::number(cnt) + QString("%"));
-}
-
-

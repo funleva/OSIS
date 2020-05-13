@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QProgressBar>
 #include <QThread>
+#include <QLabel>
 #include <QSemaphore>
 #include <barThread.h>
 
@@ -18,18 +19,17 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    QSemaphore *semaphore = new QSemaphore();
 
 public slots:
-    void on_resetButton_clicked();
 private slots:
     void on_startButton_clicked();
     void on_pauseButton_clicked();
-    void updateBar(int cur);
-    void updatePercent(int cur);
+    void updateLabel(QLabel *label, int step);
 private:
     Ui::MainWindow *ui;
-    BarThread *barThread;
+    MyThread *myThread1;
+    MyThread *myThread2;
+    MyThread *myThread3;
 
 };
 #endif // MAINWINDOW_H

@@ -1,25 +1,22 @@
 #include "barThread.h"
 #include <unistd.h>
-BarThread::BarThread(QSemaphore* s)
+MyThread::MyThread(QLabel *label, int step)
 {
-    semaphore = s;
+    this->label = label;
+    this->step = step;
 }
 
-void BarThread::run() {
-    for (int i = 0; i < 100;) {
-        if (semaphore->available()){
-            semaphore->acquire();
-            ++cnt;
-            ++i;
-            emit valueChanged(cnt);
-            semaphore->release(); 
-        }
+void MyThread::run() {
+    while (isRun) {
+        emit valueChanged(label, step);
         usleep(1e5);
     }
-    cnt = 0;
 }
 
-void BarThread::reset() {
-    cnt = 0;
-    emit valueChanged(0);
+void MyThread::go() {
+    isRun = true;
+}
+
+void MyThread::stop() {
+    isRun = false;
 }
